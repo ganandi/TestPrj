@@ -22,6 +22,10 @@ function testAPI() {
 	FB.api('/me?fields=id,name,email,gender,birthday', function(response){
 		console.log(response);
 	});
+	//抓取塗鴉牆上的Posts
+	FB.api('/me/feed', function(response){
+		console.log(response);
+	});
 }
 function login(){
 	FB.login(function(response){
