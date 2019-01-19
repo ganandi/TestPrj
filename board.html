@@ -20,6 +20,7 @@
   provider.addScope('user_birthday');
   
   //Set an authentication state observer and get user data，當使用者的登入狀態變化的時候，執行我們提供的函式
+  let currentUser=null;
   firebase.auth().onAuthStateChanged(function(user) {
 	  let welcome=document.querySelector("#welcome");
 	  let member=document.querySelector("#member");
@@ -28,6 +29,7 @@
 	  if (user) {//使用者已登入
 		// User is signed in.
 		console.log(user);
+		currentUser=user;
 		member.style.display="block";
 		/*var displayName = user.displayName;
 		var email = user.email;
@@ -54,7 +56,7 @@
 	});
   }
   
-	/*
+  /*
   firebase.auth().signInWithPopup(provider).then(function(result) {
 	  // This gives you a Facebook Access Token. You can use it to access the Facebook API.
 	  var token = result.credential.accessToken;
@@ -72,6 +74,25 @@
 	  // ...
 	});
 	*/
+  let db=firebase.database();
+  function post(){
+	let id=currentUser.uid;
+	let name=currentUser.displayName;
+	let content=document.querySelector("content");
+	//加入資料庫
+	let ref=db.ref("/message");
+	ref.push({
+		id:id, name:name, content:content, time:Date.now()
+	}, function(error){
+		if(error){
+			alert(error);
+		}
+		else{
+			alert("OK");
+		}
+		}
+	);
+  }
 </script>
 </head>
 
@@ -81,7 +102,8 @@
 		<button onclick="signin();">Sign In</button>
 	</div>
 	<div id="member" style="display:none;">
-		Hello
+		<textarea id="content"></textarea>
+		<button onclick="post();">Post</button>
 	</div>
 </body>
 
