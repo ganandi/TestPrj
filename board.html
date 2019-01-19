@@ -88,11 +88,63 @@
 			alert(error);
 		}
 		else{
-			alert("OK");
+			document.querySelector("#content").value="";
+			read();
 		}
 		}
 	);
   }
+  
+  function read(){
+	let ref=db.ref("/message");
+	ref.once("value", function(snapshots){
+		let data=[];
+		snapshots.forEach(function(snapshot){
+			let message=snapshot.val();
+			message.key=snapshot.key;
+			data.push(message);
+			//data.push(snapshot.val());
+		});
+		console.log(data);
+		show(data);
+	});
+  }
+  
+  function show(data){
+	let list=document.querySelector("#list");
+	list.innerHTML="";
+	let message;
+	for(let i=0; i<data.length; i++){
+		message=data[i];
+		if(currentUser===null){//未登入狀態
+			list.innerHTML=message.name.bold()+ " "+ message.content + "<hr/>" + list.innerHTML;
+		}else{//登入狀態
+			if(currentUser===message.id){//相同留言者
+				list.innerHTML=message.name.bold()+ " "+ message.content + 
+				"<button onclick='del(\""+ message.key + "\");'>Delete</button>" +
+				"<hr/>" + list.innerHTML;
+			}else{//不同留言者
+				list.innerHTML=message.name.bold()+ " "+ message.content + "<hr/>" + list.innerHTML;
+			}
+		}
+	}
+  }
+  
+  function del(key){
+	let ref=db.ref("/message/"+ key);
+	ref.remove(function(error){
+		if(error){
+			alert(error);
+		}else {
+			alert("Removed");
+			read();
+		}
+	})
+  }
+  //網頁完成後，做一些處理
+  window.addEventListener("load", function(){
+		read();
+  });
 </script>
 </head>
 
@@ -105,6 +157,7 @@
 		<textarea id="content"></textarea>
 		<button onclick="post();">Post</button>
 	</div>
+	<div id="list"></div>
 </body>
 
 </html>
