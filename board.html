@@ -1,0 +1,88 @@
+<html>
+<head>
+<title>Message Board</title>
+<script src="https://www.gstatic.com/firebasejs/5.8.0/firebase.js"></script>
+<script>
+  // Initialize Firebase
+  // TODO: Replace with your project's customized code snippet
+  var config = {
+    apiKey: "AIzaSyDgPF9mDOqme9QrZavj7JUj07eB-toF0-0",
+    authDomain: "test-75b6a.firebaseapp.com",
+    databaseURL: "https://test-75b6a.firebaseio.com",
+    projectId: "test-75b6a",
+    storageBucket: "test-75b6a.appspot.com",
+    messagingSenderId: "899761252944"
+  };
+  firebase.initializeApp(config);
+  
+  let auth=firebase.auth();
+  let provider = new firebase.auth.FacebookAuthProvider();
+  provider.addScope('user_birthday');
+  
+  //Set an authentication state observer and get user data，當使用者的登入狀態變化的時候，執行我們提供的函式
+  firebase.auth().onAuthStateChanged(function(user) {
+	  let welcome=document.querySelector("#welcome");
+	  let member=document.querySelector("#member");
+	  member.style.display="none";
+	  welcome.style.display="none";
+	  if (user) {//使用者已登入
+		// User is signed in.
+		console.log(user);
+		member.style.display="block";
+		/*var displayName = user.displayName;
+		var email = user.email;
+		var emailVerified = user.emailVerified;
+		var photoURL = user.photoURL;
+		var isAnonymous = user.isAnonymous;
+		var uid = user.uid;
+		var providerData = user.providerData;
+		*/
+		// ...
+	  } else {//使用者已登出
+		console.log(user);
+		welcome.style.display="block";
+		// User is signed out.
+		// ...
+	  }
+	});
+  
+  function signin(){
+	auth.signInWithPopup(provider).then(function(rsult){
+	
+	}).catch(function(error){
+	
+	});
+  }
+  
+  /*
+  firebase.auth().signInWithPopup(provider).then(function(result) {
+	  // This gives you a Facebook Access Token. You can use it to access the Facebook API.
+	  var token = result.credential.accessToken;
+	  // The signed-in user info.
+	  var user = result.user;
+	  // ...
+	}).catch(function(error) {
+	  // Handle Errors here.
+	  var errorCode = error.code;
+	  var errorMessage = error.message;
+	  // The email of the user's account used.
+	  var email = error.email;
+	  // The firebase.auth.AuthCredential type that was used.
+	  var credential = error.credential;
+	  // ...
+	});
+	*/
+</script>
+</head>
+
+<body>
+	<h3>Message Board</h3>
+	<div id="welcome" style="display:none;">
+		<button ="signin();">Sign In</button>
+	</div>
+	<div id="member" style="display:none;">
+		Hello
+	</div>
+</body>
+
+</html>
